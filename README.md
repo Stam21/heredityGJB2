@@ -4,8 +4,9 @@ Given information about people, who their parents are, and whether they have a p
 
 
 ## Run the program
-`$ python heredity.py data/family0.csv
-Harry:
+`$ python heredity.py data/family0.csv`
+
+`Harry:
   Gene:
     2: 0.0092
     1: 0.4557
