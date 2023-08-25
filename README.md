@@ -2,11 +2,10 @@
 Given information about people, who their parents are, and whether they have a particular observable trait (e.g. hearing loss) caused by a given gene, the program will infer the probability distribution for each person’s genes, as well as the probability distribution for whether any person will exhibit the trait in question.
 
 
-
-## Run the program
-`$ python heredity.py data/family0.csv`
-
-`Harry:
+## Example
+```
+$ python heredity.py data/family0.csv
+Harry:
   Gene:
     2: 0.0092
     1: 0.4557
@@ -29,4 +28,5 @@ Lily:
     0: 0.9827
   Trait:
     True: 0.0000
-    False: 1.0000`
+    False: 1.0000
+```
