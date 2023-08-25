@@ -148,29 +148,40 @@ def joint_probability(people, one_gene, two_genes, have_trait):
 
         gene_prob = PROBS["gene"][gene_count]
         trait_prob = PROBS["trait"][gene_count][trait_present]
-
+        
         if people[person]["mother"] is None:
-            total_probability *= gene_prob * trait_prob
+            total_probability *= (gene_prob*trait_prob)
         else:
             mother = people[person]["mother"]
             father = people[person]["father"]
-            passing_gene = [0, 1, 2].count(gene_count) / 2
-
-            if mother in one_gene:
-                passing_gene_prob = passing_gene * 0.5 + (1 - passing_gene) * 0.5
-            elif mother in two_genes:
-                passing_gene_prob = 1 - PROBS["mutation"]
+            
+            #probability for the mother depending on her genes
+            if mother in two_genes:
+                pass_probM = 1-PROBS["mutation"]
+            elif mother in one_gene:
+                pass_probM = 0.5
             else:
-                passing_gene_prob = PROBS["mutation"]
-
-            if father in one_gene:
-                passing_gene_prob *= passing_gene * 0.5 + (1 - passing_gene) * 0.5
-            elif father in two_genes:
-                passing_gene_prob *= 1 - PROBS["mutation"]
+                pass_probM = PROBS["mutation"]
+            
+            #probability for the father depending on his genes
+            if father in two_genes:
+                pass_probF = 1-PROBS["mutation"]
+            elif father in one_gene:
+                pass_probF = 0.5
             else:
-                passing_gene_prob *= PROBS["mutation"]
+                pass_probF = PROBS["mutation"]
 
-            total_probability *= passing_gene_prob * trait_prob
+            #probability for 0 copies of the gene
+            if gene_count == 0: 
+                total_probability *= (1-pass_probM)*(1-pass_probF)
+            #probability for 1 copies of the gene
+            elif gene_count == 1:
+                total_probability *= pass_probM * (1-pass_probF) + (1-pass_probM) * pass_probF
+            #probability for 2 copies of the gene
+            else:
+                total_probability *= pass_probM * pass_probF
+
+            total_probability *= trait_prob
 
     return total_probability
 
@@ -186,7 +197,7 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
     for person in probabilities:
         gene_count = 1 if person in one_gene else 2 if person in two_genes else 0
         trait_present = person in have_trait
-
+        
         probabilities[person]["gene"][gene_count] += p
         probabilities[person]["trait"][trait_present] += p
 
@@ -201,7 +212,7 @@ def normalize(probabilities):
             total = sum(probabilities[person][field].values())
             for value in probabilities[person][field]:
                 probabilities[person][field][value] /= total
-
+        
 
 if __name__ == "__main__":
     main()
